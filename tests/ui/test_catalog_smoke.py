@@ -1,18 +1,16 @@
-"""Day 1 deliberately uses direct locators; extract a POM on Day 2."""
-
-import re
-
 import pytest
-from playwright.sync_api import Page, expect
+
+from pages.catalog_page import CatalogPage
 
 
 @pytest.mark.ui
 @pytest.mark.smoke
-def test_catalog_displays_products(page: Page) -> None:
-    page.goto("/", wait_until="domcontentloaded")
+def test_catalog_displays_products(
+    catalog_page: CatalogPage
+) -> None:
 
-    expect(page).to_have_title(re.compile("Toolshop", re.IGNORECASE))
-    # The first locator is a property in Python: .first, not .first().
-    products = page.locator('[data-test^="product-"]')
-    expect(products.first).to_be_visible()
-    assert products.count() > 0
+    catalog_page.open()
+
+    catalog_page.verify_catalog_page_loaded()
+
+    catalog_page.verify_products_are_displayed()
